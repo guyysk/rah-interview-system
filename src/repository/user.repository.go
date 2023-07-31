@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/rbh-interview-system/src/model"
 	"go.mongodb.org/mongo-driver/bson"
@@ -26,9 +27,15 @@ func NewUserRepository(db *mongo.Database) UserRepository {
 func (r userRepository) GetUserByUserID(ctx context.Context, userId string) (model.User, error) {
 	var out user
 
+	fmt.Println("test2")
+
 	objId, _ := primitive.ObjectIDFromHex(userId)
 
+	fmt.Println(objId)
+
 	err := r.userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&out)
+
+	fmt.Println(out)
 
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {

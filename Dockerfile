@@ -1,15 +1,22 @@
 FROM golang:1.18
 
-WORKDIR /app
-COPY go.mod go.sum ./
+# Set the Current Working Directory inside the container
+WORKDIR /app/rbh-interview-system
+
+# We want to populate the module cache based on the go.{mod,sum} files.
+COPY go.mod .
+COPY go.sum .
+
 RUN go mod download
-COPY *.go ./
-RUN go get github.com/rbh-interview-system/src
-RUN go get github.com/rbh-interview-system/src/model
-RUN go get github.com/rbh-interview-system/src/repository
-RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping
+
+COPY . .
+
+# Build the Go app
+RUN go build -o ./out/rbh-interview-system .
 
 
+# This container exposes port 8080 to the outside world
 EXPOSE 8080
 
-CMD ["/docker-gs-ping"]
+# Run the binary program produced by `go install`
+CMD ["./out/rbh-interview-system"]
